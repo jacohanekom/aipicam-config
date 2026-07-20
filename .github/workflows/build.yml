@@ -84,6 +84,22 @@ jobs:
       # then each re-upload with --delete based on its own stale local
       # mirror — silently dropping the other's just-published package
       # (confirmed happening between mp3-player and victron_ve_direct).
+      #
+      # This step's own retry loop below deliberately swallows aws's
+      # stderr on every attempt (so a normal multi-repo lock wait doesn't
+      # spam the log), which means an actual credentials/permissions
+      # problem looks IDENTICAL to normal lock contention: it just retries
+      # forever, breaking the "stale" lock every 600s and immediately
+      # failing to re-acquire it, with no visible error anywhere. Fail
+      # fast with the real error instead of discovering that the hard way.
+      - name: Verify R2 credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+          ENDPOINT="https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+          aws s3 ls "s3://${R2_BUCKET}/" --endpoint-url "$ENDPOINT"
+
       - name: Acquire R2 publish lock
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
