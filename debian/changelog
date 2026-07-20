@@ -1,0 +1,8 @@
+aipicam-config (1.0.0) stable; urgency=low
+
+  * Initial release.
+  * Ships /etc/aipicam/streams.conf as the shared source of truth for
+    picam-raw's camera stream dimensions and ports, read by
+    picam-orchestrator, picam-hailo, and picam-recorder.
+
+ -- Jaco Hanekom <jhanekom@gmail.com>  Mon, 20 Jul 2026 00:00:00 +0000

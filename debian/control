@@ -1,0 +1,22 @@
+Source: aipicam-config
+Section: misc
+Priority: optional
+Maintainer: Jaco Hanekom <jhanekom@gmail.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+
+Package: aipicam-config
+Architecture: all
+Depends: ${misc:Depends}
+Description: Shared stream config for the aipicam camera pipeline
+ Ships /etc/aipicam/streams.conf, the single source of truth for
+ picam-raw's raw camera stream dimensions and ports. picam-raw
+ (producer) and picam-orchestrator, picam-hailo, picam-recorder
+ (consumers) all read this file so their view of the stream's
+ geometry can't silently drift apart — picam-raw's wire protocol
+ carries no width/height field, so a mismatch here previously meant
+ silent frame corruption with no error raised anywhere.
+ .
+ This package installs no binary and runs no service; it is a
+ dependency of every camera-pipeline package above.
