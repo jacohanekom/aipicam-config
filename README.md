@@ -16,14 +16,19 @@ This package makes the values a single, shared fact instead of four independentl
 [stream]
 main_width      = 2304
 main_height     = 1296
+mid_width       = 1920
+mid_height      = 1080
 lores_width     = 640
 lores_height    = 360
 
 main_port       = 8560
 lores_port      = 8561
+mid_port        = 8562
 telemetry_port  = 8555
 command_port    = 8556
 ```
+
+`mid` is a third, ISP-scaled tap picam-raw *attempts* to produce alongside `main`/`lores` — not guaranteed on every camera/ISP configuration, picam-raw falls back to just `main`+`lores` and logs clearly if a third simultaneous stream isn't supported on the hardware it's running on. `picam-recorder` can optionally compress its `main-low` tier from `mid` instead of downscaling `main` itself in software (see that project's own `[recorder].main_low_source`).
 
 ## Who reads this
 
@@ -32,7 +37,7 @@ command_port    = 8556
 | `picam-raw` | all of it — this is what it actually captures/serves |
 | `picam-orchestrator` | all of it |
 | `picam-hailo` | `lores_width`, `lores_height`, `lores_port` |
-| `picam-recorder` | `main_width`, `main_height`, `main_port` |
+| `picam-recorder` | `main_width`, `main_height`, `main_port`, and optionally `mid_width`, `mid_height`, `mid_port` (see `main_low_source`) |
 
 Each package's own config file can still explicitly set these same keys to override the shared file for local debugging — but the packaged defaults no longer duplicate these values, so a fresh install of any combination of these packages always agrees.
 
